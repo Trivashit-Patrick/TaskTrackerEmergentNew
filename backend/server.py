@@ -12,6 +12,7 @@ import uuid
 from datetime import datetime, timezone, timedelta
 from passlib.context import CryptContext
 from jose import JWTError, jwt
+from fastapi.middleware.cors import CORSMiddleware
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
@@ -316,13 +317,26 @@ async def get_analytics_trends(current_user: User = Depends(get_current_user)):
 # Include the router in the main app
 app.include_router(api_router)
 
+#app.add_middleware(
+#   CORSMiddleware,
+#    allow_credentials=True,
+#   allow_origins=os.environ.get('CORS_ORIGINS', '*').split(','),
+#    allow_methods=["*"],
+#    allow_headers=["*"],
+#)
+origins = [
+    "http://localhost:3000",
+    "https://tasktrackernew.netlify.app",  # your exact Netlify URL
+]
+
 app.add_middleware(
     CORSMiddleware,
+    allow_origins=origins,
     allow_credentials=True,
-    allow_origins=os.environ.get('CORS_ORIGINS', '*').split(','),
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 
 logging.basicConfig(
     level=logging.INFO,
